@@ -1,32 +1,23 @@
-'use strict';
+import express from "express";
+import { createServer } from "http";
+import authRoute from "./routes/auth.js";
+import WSServer from "./routes/WSServer.js"
 
-const express = require('express');
-const path = require('path');
-const { createServer } = require('http');
+const PORT = 8080;
 
-const WebSocket = require('ws');
-
+// ----- EXPRESS JS
 const app = express();
+app.use(authRoute);
 
+// ----- HTTP SERVER
 const server = createServer(app);
-const wss = new WebSocket.Server({ server });
 
-wss.on('connection', function(ws) {
-	const id = setInterval(function() {
-		ws.send(JSON.stringify(process.memoryUsage()), function() {
-			//
-			// Ignoring errors.
-			//
-		});
-	}, 100);
-	console.log('started client interval');
+// ----- WEBSOCKET SERVER
+const serverManager = new WSServer(server);
+serverManager.setupEventListeners();
 
-	ws.on('close', function() {
-		console.log('stopping client interval');
-		clearInterval(id);
-	});
-});
-
-server.listen(8080, function() {
-	console.log('Listening on http://0.0.0.0:8080');
+// ----- SERVER START
+server.listen(PORT, function() {
+	console.log(`[Server] Listening on http://localhost:${PORT}`);
+	console.log(`[Server] Listening on ws://localhost:${PORT}`);
 });
