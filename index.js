@@ -1,5 +1,6 @@
 import express from "express";
 import { createServer } from "http";
+import nocache from "nocache";
 import 'dotenv/config'
 import WSServer from "./webSocet/WSServer.js"
 
@@ -10,6 +11,7 @@ const PORT = 8080;
 
 // ----- EXPRESS JS
 const app = express();
+app.use(nocache());
 app.use(express.json());
 
 app.use(authRoute);
