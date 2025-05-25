@@ -32,7 +32,7 @@ export default class Lobby {
 			return;
 		}
 		delete this.#players[player.id];
-		this.#playerCount++;
+		this.#playerCount--;
 	}
 
 	addPlayer(player) {

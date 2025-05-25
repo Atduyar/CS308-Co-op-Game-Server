@@ -10,6 +10,10 @@ export default class Player {
 		this.id = null;
 	}
 
+	getName() {
+		return this.client.user.name;
+	}
+
 	giveLobbyId(id) {
 		this.id = id;
 	}

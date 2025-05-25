@@ -82,9 +82,15 @@ class ClientConnection {
 				}
 				if (this.#lobby) {
 					this.#lobby.kickPlayer(this.#player);
+					this.#lobby.sendEventToOthers(this.#player, {
+						type: "event",
+						event: "kickPlayer",
+						playerId: this.#player.id,
+					})
 					this.#lobby = null;
 					this.#player = null;
 				}
+
 				this.#player = new Player(this);
 				if (!lb.addPlayer(this.#player)) {
 					this.#player = null;
@@ -99,15 +105,39 @@ class ClientConnection {
 				}
 				this.#lobby = lb;
 				console.log(`[WSClinet(${this.user.ip})] Player \"${this.user.name}\" joined to the lobby: #${data.lobbyId}`);
+
 				this.sendEvent({
 					type: "conf",
-					what: "join"
+					what: "join",
+					yourPlayerId: this.#player.id,
+					players: Object.values(this.#lobby.players).map(p => ({
+						id: p.id,
+						name: p.name,
+						pos: p.pos,
+						coins: p.coins
+					}))
 				});
+				this.#lobby.sendEventToOthers(this.#player, {
+					type: "event",
+					event: "newPlayer",
+					newPlayer: {
+						id: this.#player.id,
+						name: this.#player.name,
+						pos: this.#player.pos,
+						coins: this.#player.coins
+					},
+				})
+
 				console.log(this.#lobby.players);
 				break;
 			case "exit":
 				console.log(`[WSClinet(${this.user.ip})] Player \"${this.user.name}\" exit form the lobby: #${data.lobbyId}`);
 				this.#lobby.kickPlayer(this.#player);
+				this.#lobby.sendEventToOthers(this.#player, {
+					type: "event",
+					event: "kickPlayer",
+					playerId: this.#player.id,
+				})
 				this.#player = null;
 				this.#lobby = null;
 				break;
