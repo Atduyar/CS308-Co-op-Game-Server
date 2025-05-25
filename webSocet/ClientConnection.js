@@ -179,10 +179,16 @@ class ClientConnection {
 	}
 
 	cleanup() {
-		if (this.intervalId) {
-			clearInterval(this.intervalId);
-			console.log(`[WSClinet(${this.user.ip})] Cleared interval (ID: ${this.intervalId}).`);
-			this.intervalId = null;
+		if (this.#lobby) {
+			console.log(`[WSClinet(${this.user.ip})] Cleared player from lobby (ID: ${this.#player?.id}).`);
+			this.#lobby.kickPlayer(this.#player);
+			this.#lobby.sendEventToOthers(this.#player, {
+				type: "event",
+				event: "kickPlayer",
+				playerId: this.#player.id,
+			})
+			this.#player = null;
+			this.#lobby = null;
 		}
 
 		console.log(`[WSClinet(${this.user.ip})] Connection resources cleaned up.`);
