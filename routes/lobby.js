@@ -25,8 +25,14 @@ router.get("/", auth, (_, res) => {
 	res.json(lb);
 });
 
+
+router.post("/:macCount", auth, (req, res) => {
+	let lb = lobbyManager.createLobby(req.body.name, req.params.macCount);
+	res.json(lb);
+});
+
 router.post("/", auth, (req, res) => {
-	let lb = lobbyManager.createLobby(req.body.name);
+	let lb = lobbyManager.createLobby(req.body.name, 2);
 	res.json(lb);
 });
 

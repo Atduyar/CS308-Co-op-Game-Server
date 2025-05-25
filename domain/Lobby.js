@@ -7,9 +7,9 @@ export default class Lobby {
 	#playerCount;
 	#id;
 
-	constructor(lobbyName, id) {
+	constructor(lobbyName, id, maxCount) {
 		this.name = lobbyName;
-		this.maxPlayerCount = 2;
+		this.maxPlayerCount = maxCount;
 		this.#players = {};
 		this.#playerCount = 0;
 		this.#id = id;

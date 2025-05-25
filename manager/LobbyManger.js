@@ -45,8 +45,8 @@ export default class LobbyManager {
 		}));
 	}
 
-	createLobby(name) {
-		let l = new Lobby(name, this.#nextId);
+	createLobby(name, maxCount) {
+		let l = new Lobby(name, this.#nextId, maxCount);
 		this.#lobbies[this.#nextId] = l;
 		this.#nextId++;
 
