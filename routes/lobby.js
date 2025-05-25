@@ -30,10 +30,15 @@ router.post("/", auth, (req, res) => {
 	res.json(lb);
 });
 
-router.get("/join", auth, (req, res) => {
-	res.json({
-		ok: 42
-	});
+router.delete("/:id", auth, (req, res) => {
+	lobbyManager.delete(req.params.id);
+	res.json({ ok: 42 });
+});
+
+
+router.delete("/", auth, (req, res) => {
+	lobbyManager.deleteAll();
+	res.json({ ok: 42 });
 });
 
 export default router;

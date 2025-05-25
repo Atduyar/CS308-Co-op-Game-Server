@@ -44,4 +44,12 @@ export default class LobbyManager {
 
 		return l;
 	}
+
+	delete(id) {
+		delete this.#lobbies[id];
+	}
+
+	deleteAll() {
+		this.#lobbies = {};
+	}
 }
