@@ -15,6 +15,14 @@ export default class LobbyManager {
 		return this;
 	}
 
+	getLobbyRaw(id) {
+		const l = this.#lobbies[id]
+		if (l == null) {
+			return null;
+		}
+		return l;
+	}
+
 	getLobby(id) {
 		const l = this.#lobbies[id]
 		if (l == null) {
