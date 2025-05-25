@@ -1,5 +1,7 @@
 import { WebSocketServer, WebSocket } from "ws";
 import ClientConnection from "./ClientConnection.js";
+import auth from "../middleware/auth.js";
+import { resolve } from "path";
 
 class WSServer {
 	constructor(server) {
@@ -15,9 +17,25 @@ class WSServer {
 
 	onConnection(ws, req) {
 		const clientIp = req.socket.remoteAddress;
-		console.log(`[WSServer] Client connected from ${clientIp}`);
+		let kickUserOut = null;
+		const res = {
+			status: (_httpCode) => {
+				kickUserOut = true;
+			},
+			json: (jsonRes) => {
+				kickUserOut = jsonRes;
+			}
+		};
+		const next = () => { };
+		auth(req, res, next);
+		if (kickUserOut) {
+			ws.close(1008, 'Invalid or expired token');
+			console.log("[WSServer]: Invalid or expired token.")
+			return;
+		}
 
-		new ClientConnection(ws, clientIp);
+		console.log(`[WSServer] Client connected from ${clientIp} named: ${req.user.name}`);
+		new ClientConnection(ws, clientIp, req.user);
 	}
 
 	onListening() {

@@ -1,10 +1,13 @@
 class ClientConnection {
-	constructor(ws, clientIdentifier) {
+	constructor(ws, clientIdentifier, user) {
 		this.ws = ws;
-		this.clientIdentifier = clientIdentifier;
+		this.user = {
+			ip: clientIdentifier,
+			...user
+		};
 		this.intervalId = null;
 
-		console.log(`[WSClinet(${this.clientIdentifier})] Connection handler created.`);
+		console.log(`[WSClinet(${this.user.ip})] Connection handler created.`);
 		this.initialize();
 	}
 
@@ -21,7 +24,7 @@ class ClientConnection {
 			this.sendMemoryUsage();
 		}, 1000);
 		console.log(
-			`[WSClinet(${this.clientIdentifier})] Started data interval (ID: ${this.intervalId}).`,
+			`[WSClinet(${this.user.ip})] Started data interval (ID: ${this.intervalId}).`,
 		);
 	}
 
@@ -33,7 +36,7 @@ class ClientConnection {
 		this.ws.send(JSON.stringify(process.memoryUsage()), (err) => {
 			if (err) {
 				console.error(
-					`[WSClinet(${this.clientIdentifier})] Error sending message:`,
+					`[WSClinet(${this.user.ip})] Error sending message:`,
 					err,
 				);
 			}
@@ -48,7 +51,7 @@ class ClientConnection {
 
 	handleMessage(message) {
 		console.log(
-			`[WSClinet(${this.clientIdentifier})] Received message: ${message.toString()}`,
+			`[WSClinet(${this.user.ip})] Received message: ${message.toString()}`,
 		);
 	}
 
@@ -57,18 +60,18 @@ class ClientConnection {
 	}
 
 	handleError(error) {
-		console.error(`[WSClinet(${this.clientIdentifier})] WebSocket error:`, error);
+		console.error(`[WSClinet(${this.user.ip})] WebSocket error:`, error);
 		this.cleanup();
 	}
 
 	cleanup() {
 		if (this.intervalId) {
 			clearInterval(this.intervalId);
-			console.log(`[WSClinet(${this.clientIdentifier})] Cleared interval (ID: ${this.intervalId}).`);
+			console.log(`[WSClinet(${this.user.ip})] Cleared interval (ID: ${this.intervalId}).`);
 			this.intervalId = null;
 		}
 
-		console.log(`[WSClinet(${this.clientIdentifier})] Connection resources cleaned up.`);
+		console.log(`[WSClinet(${this.user.ip})] Connection resources cleaned up.`);
 	}
 }
 
